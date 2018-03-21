@@ -33,6 +33,7 @@
 #include "AxonAFXXLPSceneNumberEvent.h"
 #include "AxonCCMidiEvent.h"
 #include "AxonPCMidiEvent.h"
+#include "AxonSongSelectMidiEvent.h"
 
 // LOGIC BLOCKS
 #include "AxonMomentarySwitchEventClient.h"
@@ -218,7 +219,7 @@ void BANDHELPER_PREV_FEATURE()
 
   // LOGIC BLOCKS
   AxonMomentarySwitchEventClient *BandhelperPreviousSw = new AxonMomentarySwitchEventClient(12);  // switch logic
-  BandhelperPreviousSw->setOnChangeAction( BandhelperGeneral1 );          // link the onAction hook to the action we want to execute
+  BandhelperPreviousSw->setOnAction( BandhelperGeneral1 );          // link the onAction hook to the action we want to execute
   AxonLabelDisplayEventClient *BandHelperPrevScribble = new AxonLabelDisplayEventClient( 12, "PREV", "PREV" );                 // etc...
 }
 
@@ -228,12 +229,12 @@ void BANDHELPER_STOP_FEATURE()
   AxonSendMidiCCAction *BandhelperGeneral2 = new AxonSendMidiCCAction();  // action to send a MIDI Control Change
   BandhelperGeneral2->setNetwork( 1 );                                    // use network "1" (the 2nd) MIDI physical port on rear of Axon
   BandhelperGeneral2->setChannel( 1 );                                    // Bandhelper is configured to be on MIDI Channel 1
-  BandhelperGeneral2->setCC( 81 );                                        // General Button 2 is CC 81
+  BandhelperGeneral2->setCC( 82 );                                        // General Button 2 is CC 81
   BandhelperGeneral2->setVal( 0 );                                        // lets be good and initialise the value to ZERO ( not really required )
 
   // LOGIC BLOCKS
   AxonMomentarySwitchEventClient *BandhelperStopSw = new AxonMomentarySwitchEventClient(13);      // switch logic
-  BandhelperStopSw->setOnChangeAction( BandhelperGeneral2 );              // link the onAction hook to the action we want to execute
+  BandhelperStopSw->setOnAction( BandhelperGeneral2 );              // link the onAction hook to the action we want to execute
   AxonLabelDisplayEventClient *BandHelperStopScribble = new AxonLabelDisplayEventClient( 13, "STOP", "STOP" );                 // etc...
 }
 
@@ -244,12 +245,12 @@ void BANDHELPER_NEXT_FEATURE()
   AxonSendMidiCCAction *BandhelperGeneral3 = new AxonSendMidiCCAction();  // action to send a MIDI Control Change
   BandhelperGeneral3->setNetwork( 1 );                                    // use network "1" (the 2nd) MIDI physical port on rear of Axon
   BandhelperGeneral3->setChannel( 1 );                                    // Bandhelper is configured to be on MIDI Channel 1
-  BandhelperGeneral3->setCC( 82 );                                        // General Button 3 is CC 82
+  BandhelperGeneral3->setCC( 81 );                                        // General Button 3 is CC 82
   BandhelperGeneral3->setVal( 0 );                                        // lets be good and initialise the value to ZERO ( not really required )
 
   // LOGIC BLOCKS
   AxonMomentarySwitchEventClient *BandhelperNextSw = new AxonMomentarySwitchEventClient(14);      // switch logic
-  BandhelperNextSw->setOnChangeAction( BandhelperGeneral3 );              // link the onAction hook to the action we want to execute
+  BandhelperNextSw->setOnAction( BandhelperGeneral3 );              // link the onAction hook to the action we want to execute
   AxonLabelDisplayEventClient *BandHelperNextScribble = new AxonLabelDisplayEventClient( 14, "NEXT", "NEXT" );                 // etc...
 }
 
@@ -265,7 +266,7 @@ void BANDHELPER_START_FEATURE()
 
   // LOGIC BLOCKS
   AxonMomentarySwitchEventClient *BandhelperStartSw = new AxonMomentarySwitchEventClient(15);     // switch logic
-  BandhelperStartSw->setOnChangeAction( BandhelperGeneral4 );             // link the onAction hook to the action we want to execute
+  BandhelperStartSw->setOnAction( BandhelperGeneral4 );             // link the onAction hook to the action we want to execute
   AxonLabelDisplayEventClient *BandHelperStartScribble = new AxonLabelDisplayEventClient( 15, "START", "START" );               // etc...
 }
 
@@ -304,7 +305,7 @@ void EXPRESSION_PEDAL1_FEATURE()
 {
   // ACTIONS
   AxonSendMidiCCAction *AFXExtern1 = new AxonSendMidiCCAction();        // action to send a MIDI control Change
-  AFXExtern1->setNetwork( 1 );                                          // use network "0" MIDI physical port on rear of Axon
+  AFXExtern1->setNetwork( 0 );                                          // use network "0" MIDI physical port on rear of Axon
   AFXExtern1->setChannel( 1 );                                          // my AFX is configured to be on MIDI Channel 1
   AFXExtern1->setCC( 16 );                                              // Extern1 is initiated with controller number 16
   AFXExtern1->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
@@ -452,11 +453,13 @@ void SJP_TESTING_FEATURES()
 	PCEvent->setNetwork( 1 );
 	PCEvent->setChannel( 1 );
 	PCEvent->setPC( 5 );
-
+	AxonSongSelectMidiEvent *SSEvent = new AxonSongSelectMidiEvent();
+	SSEvent->setNetwork( 1 );
+	SSEvent->setSongNumber( 3 );
 	
+	AxonEventManager::instance()->clientRegister( aClient, SSEvent );
 	AxonEventManager::instance()->clientRegister( aClient, PCEvent );
 	AxonEventManager::instance()->clientRegister( aClient, CCEvent );
-	
 }
 
 
@@ -477,6 +480,7 @@ void setup() {
 
 // CONFIGURATION CODE STARTS HERE...
   
+
   TAP_TEMPO_FEATURE();
 #ifdef DEBUG_OBJECT_CREATE_DESTROY
   AxonCheckMem::instance()->check();
@@ -545,12 +549,12 @@ void setup() {
 #ifdef DEBUG_OBJECT_CREATE_DESTROY
   AxonCheckMem::instance()->check();
 #endif
-
-
-	SJP_TESTING_FEATURES();
+  SJP_TESTING_FEATURES();
 #ifdef DEBUG_OBJECT_CREATE_DESTROY
   AxonCheckMem::instance()->check();
 #endif
+
+
 	
 
 // CONFIGURATION CODE COMPLETE...
