@@ -31,6 +31,8 @@
 #include "AxonSoftwareSwitchEvent.h"
 #include "AxonSysExMidiEvent.h"
 #include "AxonAFXXLPSceneNumberEvent.h"
+#include "AxonCCMidiEvent.h"
+#include "AxonPCMidiEvent.h"
 
 // LOGIC BLOCKS
 #include "AxonMomentarySwitchEventClient.h"
@@ -302,7 +304,7 @@ void EXPRESSION_PEDAL1_FEATURE()
 {
   // ACTIONS
   AxonSendMidiCCAction *AFXExtern1 = new AxonSendMidiCCAction();        // action to send a MIDI control Change
-  AFXExtern1->setNetwork( 0 );                                          // use network "0" MIDI physical port on rear of Axon
+  AFXExtern1->setNetwork( 1 );                                          // use network "0" MIDI physical port on rear of Axon
   AFXExtern1->setChannel( 1 );                                          // my AFX is configured to be on MIDI Channel 1
   AFXExtern1->setCC( 16 );                                              // Extern1 is initiated with controller number 16
   AFXExtern1->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
@@ -429,6 +431,34 @@ void AXEFX_CORE_FEATURES()
 //  AFXXLPSysExEventClient->onPresetBlocksDataRxd                                           // when block information received run the macro
 }
 
+void SJP_TESTING_FEATURES()
+{
+	// ACTIONS
+	AxonSendMidiCCAction *Regen1 = new AxonSendMidiCCAction();        // action to send a MIDI control Change
+	Regen1->setNetwork( 1 );                                          // use network "0" MIDI physical port on rear of Axon
+	Regen1->setChannel( 2 );                                          // my AFX is configured to be on MIDI Channel 1
+	Regen1->setCC( 7 );                                              // Extern5 is initiated with controller number 20
+	Regen1->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
+
+	AxonActionEventClient *aClient = new AxonActionEventClient();
+	aClient->setOnChangeAction( Regen1 );
+
+
+	AxonCCMidiEvent *CCEvent = new AxonCCMidiEvent();
+	CCEvent->setNetwork( 1 );
+	CCEvent->setChannel( 1 );
+	CCEvent->setCC( 7 );
+	AxonPCMidiEvent *PCEvent = new AxonPCMidiEvent();
+	PCEvent->setNetwork( 1 );
+	PCEvent->setChannel( 1 );
+	PCEvent->setPC( 5 );
+
+	
+	AxonEventManager::instance()->clientRegister( aClient, PCEvent );
+	AxonEventManager::instance()->clientRegister( aClient, CCEvent );
+	
+}
+
 
 
 void setup() {
@@ -515,6 +545,13 @@ void setup() {
 #ifdef DEBUG_OBJECT_CREATE_DESTROY
   AxonCheckMem::instance()->check();
 #endif
+
+
+	SJP_TESTING_FEATURES();
+#ifdef DEBUG_OBJECT_CREATE_DESTROY
+  AxonCheckMem::instance()->check();
+#endif
+	
 
 // CONFIGURATION CODE COMPLETE...
     
