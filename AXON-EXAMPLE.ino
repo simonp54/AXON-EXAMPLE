@@ -1,6 +1,6 @@
-// Tim inserted this comment
-// and this one
-// and simon added this
+// INITIAL FILE CREATED JANUARY 2018 by Simon Peace
+// This is an example of how the objects of the Axon Library can be used to build
+// a functioning Axon Footcontroller
 
 // HARDWARE
 #include "AxonKeyScanner.h"
