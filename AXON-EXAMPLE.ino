@@ -70,14 +70,21 @@ void BAND_CONFIG_FEATURE()
   AFXExtern3->setNetwork( 0 );                                          // use network "0" MIDI physical port on rear of Axon
   AFXExtern3->setChannel( 1 );                                          // my AFX is configured to be on MIDI Channel 1
   AFXExtern3->setCC( 18 );                                              // Extern3 is initiated with controller number 18
-  AFXExtern3->setVal( 100 );                                            // initialise to our static value that will always be sent
+  AFXExtern3->setVal( 85 );                                            // initialise to our static value that will always be sent
   AFXExtern3->fixVal( true );                                           // make the value fixed
 
   AxonSendMidiCCAction *AFXExtern4 = new AxonSendMidiCCAction();        // action to send a MIDI control Change
   AFXExtern4->setNetwork( 0 );                                          // use network "0" MIDI physical port on rear of Axon
   AFXExtern4->setChannel( 1 );                                          // my AFX is configured to be on MIDI Channel 1
   AFXExtern4->setCC( 19 );                                              // Extern4 is initiated with controller number 19
-  AFXExtern4->setVal( 80 );                                             // initialise to our static value that will always be sent
+  AFXExtern4->setVal( 108 );                                             // initialise to our static value that will always be sent
+  AFXExtern4->fixVal( true );                                           // make the value fixed
+
+  AxonSendMidiCCAction *AFXExtern5 = new AxonSendMidiCCAction();        // action to send a MIDI control Change
+  AFXExtern4->setNetwork( 0 );                                          // use network "0" MIDI physical port on rear of Axon
+  AFXExtern4->setChannel( 1 );                                          // my AFX is configured to be on MIDI Channel 1
+  AFXExtern4->setCC( 20 );                                              // Extern4 is initiated with controller number 19
+  AFXExtern4->setVal( 85 );                                             // initialise to our static value that will always be sent
   AFXExtern4->fixVal( true );                                           // make the value fixed
 
   AxonMacroAction *ExternCTRLMacro = new AxonMacroAction();               // a macro to load with two sub actions
@@ -300,16 +307,7 @@ void EXPRESSION_PEDAL1_FEATURE()
   AFXExtern1->setCC( 16 );                                              // Extern1 is initiated with controller number 16
   AFXExtern1->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
 
-  // LOGIC BLOCKS
-  // CLIENTS TO RUN EXPRESSION PEDALS
-  AxonActionEventClient *AxeFxExtern1Client = new AxonActionEventClient();
-  AxeFxExtern1Client->setOnChangeAction( AFXExtern1 );                                         // link the onAction hook to the action we want to execute
-
-  // EVENTS
-  AxonHardwareSwitchEvent *Expr1HardwareEvent = new AxonHardwareSwitchEvent(30);        // expression 1's hardware events
-
-  // ROUTINGS
-  AxonEventManager::instance()->clientRegister( AxeFxExtern1Client,     Expr1HardwareEvent );         // link the Extern1 Client to the Hardware Switch Events
+  AxonExprScanner::instance()->setOnExpr1Change( AFXExtern1 );
 }
 
 void EXPRESSION_PEDAL2_FEATURE()
@@ -321,15 +319,7 @@ void EXPRESSION_PEDAL2_FEATURE()
   AFXExtern2->setCC( 17 );                                              // Extern2 is initiated with controller number 17
   AFXExtern2->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
 
-  // LOGIC BLOCKS
-  AxonActionEventClient *AxeFxExtern2Client = new AxonActionEventClient();
-  AxeFxExtern2Client->setOnChangeAction( AFXExtern2 );                                         // link the onAction hook to the action we want to execute
-
-  // EVENTS
-  AxonHardwareSwitchEvent *Expr2HardwareEvent = new AxonHardwareSwitchEvent(31);        // expression 2's hardware events
-
-  // ROUTINGS
-  AxonEventManager::instance()->clientRegister( AxeFxExtern2Client,     Expr2HardwareEvent );         // link the Extern1 Client to the Hardware Switch Events
+  AxonExprScanner::instance()->setOnExpr2Change( AFXExtern2 );
 }
 
 void EXPRESSION_PEDAL3_FEATURE()
@@ -341,15 +331,7 @@ void EXPRESSION_PEDAL3_FEATURE()
   AFXExtern5->setCC( 20 );                                              // Extern5 is initiated with controller number 20
   AFXExtern5->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
 
-  // LOGIC BLOCKS
-  AxonActionEventClient *AxeFxExtern3Client = new AxonActionEventClient();
-  AxeFxExtern3Client->setOnChangeAction( AFXExtern5 );                                         // link the onAction hook to the action we want to execute
-
-  // EVENTS
-  AxonHardwareSwitchEvent *Expr3HardwareEvent = new AxonHardwareSwitchEvent(32);        // expression 3's hardware events
-
-  // ROUTINGS
-  AxonEventManager::instance()->clientRegister( AxeFxExtern3Client,     Expr3HardwareEvent );         // link the Extern1 Client to the Hardware Switch Events
+  AxonExprScanner::instance()->setOnExpr3Change( AFXExtern5 );
 }
 
 void EXPRESSION_PEDAL4_FEATURE()
@@ -361,15 +343,7 @@ void EXPRESSION_PEDAL4_FEATURE()
   AFXExtern6->setCC( 21 );                                              // Extern6 is initiated with controller number 21
   AFXExtern6->setVal( 0 );                                              // lets be good and initialise the value to ZERO ( not really required )
 
-  // LOGIC BLOCKS
-  AxonActionEventClient *AxeFxExtern4Client = new AxonActionEventClient();
-  AxeFxExtern4Client->setOnChangeAction( AFXExtern6 );                                         // link the onAction hook to the action we want to execute
-
-  // EVENTS
-  AxonHardwareSwitchEvent *Expr4HardwareEvent = new AxonHardwareSwitchEvent(33);        // expression 4's hardware events
-
-  // ROUTINGS
-  AxonEventManager::instance()->clientRegister( AxeFxExtern4Client,     Expr4HardwareEvent );         // link the Extern1 Client to the Hardware Switch Events
+  AxonExprScanner::instance()->setOnExpr4Change( AFXExtern6 );
 }
 
 void AXEFX_CORE_FEATURES()
@@ -554,8 +528,8 @@ void loop() {
   static AxonExprScanner *ExprScanner = AxonExprScanner::instance();        // ...........                  ..to the singleton Expression Pedal Scanner
   static AxonMidi *MidiScanner = AxonMidi::instance();                      // .................           ...to the singleton MIDI implementation
   
-  EvMgr->processQueue();                                                    // Process the Event Queue
   KeyScanner->check();                                                      // self throttled and generates all the hardware events from physical switches
+  EvMgr->processQueue();                                                    // Process the Event Queue
   ExprScanner->check();                                                     // self throttled and generates hardware events from the analog input ports
   MidiScanner->read();                                                      // process incoming MIDI messaging from serial ports
 
