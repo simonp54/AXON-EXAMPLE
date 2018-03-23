@@ -188,7 +188,7 @@ void DHOLD_FEATURE()
   DelayHoldSw->setOnAction( AFXExtern12 );                              // link the onAction hook to the action we want to execute
   DelayHoldSw->setOffAction( AFXExtern12 );                             // line the OffAction hook to the actions we want to execute
   
-  AxonLabelDisplayEventClient *DHoldScribble = new AxonLabelDisplayEventClient( 8, "D HOLD", "D HOLD" );               // middle row etc...
+  AxonLabelDisplayEventClient *DHoldScribble = new AxonLabelDisplayEventClient( 9, "<DHLD", "<DHLD" );               // middle row etc...
 }
 
 void CONTRAST_FEATURE()
