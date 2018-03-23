@@ -40,6 +40,12 @@
 #include "AxonSongSelectMidiEvent.h"
 
 // LOGIC BLOCKS
+/*
+	****************************************************************
+	* Example Arduino Sketch for the Axon Midi Controller Platform *
+	****************************************************************
+*/
+
 #include "AxonMomentarySwitchEventClient.h"
 #include "AxonLatchingSwitchEventClient.h"
 #include "AxonRadioSwitchGroupEventClient.h"
